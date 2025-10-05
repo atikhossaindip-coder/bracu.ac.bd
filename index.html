@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BRAC University SLMS</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI",Arial,sans-serif; }
+    body { display:flex; height:100vh; background:#f9fafc; color:#333; }
+
+    .sidebar {
+      width:240px;
+      background:#fff;
+      box-shadow:2px 0 5px rgba(0,0,0,0.1);
+      display:flex;
+      flex-direction:column;
+    }
+
+    .logo {
+      text-align:center;
+      padding:20px;
+      border-bottom:1px solid #e5e7eb;
+    }
+
+    .logo img {
+      width: 120px;
+      display:block;
+      margin: 0 auto 15px auto;
+    }
+
+    .logo-text {
+      font-size: 14px;
+      color: #333;
+      line-height: 1.4;
+    }
+    .logo-text strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+
+    .sidebar ul {
+      list-style:none;
+      margin-top:10px;
+    }
+    .sidebar ul li {
+      padding:15px 25px;
+      cursor:pointer;
+      font-size:15px;
+      color:#333;
+      transition:background 0.2s;
+    }
+    .sidebar ul li:hover,
+    .sidebar ul li.active {
+      background-color:#e6eefc;
+      color:#0056d2;
+      font-weight:600;
+    }
+
+    .main {
+      flex:1;
+      display:flex;
+      flex-direction:column;
+    }
+    .header {
+      background:#fff;
+      padding:15px 25px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      border-bottom:1px solid #e5e7eb;
+    }
+    .header h2 { font-weight:500; }
+    .content {
+      flex:1;
+      padding:30px;
+      overflow-y:auto;
+    }
+
+    table {
+      width:100%;
+      border-collapse:collapse;
+      margin-top:20px;
+      background:#fff;
+      border:1px solid #ddd;
+    }
+    th, td {
+      border:1px solid #ddd;
+      padding:10px;
+      text-align:center;
+    }
+    th { background:#f2f4f8; }
+
+    .grade-container {
+      text-align:center;
+      background:#fff;
+      padding:30px;
+      border-radius:8px;
+      box-shadow:0 0 5px rgba(0,0,0,0.1);
+      width:80%;
+      margin:0 auto;
+    }
+    
+    .grade-sheet {
+      width: 100%;
+      background: white;
+      padding: 30px;
+      margin-top: 20px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      display: none;
+    }
+    
+    .grade-header {
+      text-align: center;
+      margin-bottom: 30px;
+      border-bottom: 2px solid #0056d2;
+      padding-bottom: 15px;
+    }
+    
+    .student-info {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 5px;
+    }
+    
+    .grades-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    
+    .grades-table th {
+      background: #0056d2;
+      color: white;
+      padding: 12px;
+      text-align: left;
+    }
+    
+    .grades-table td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .grades-table tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+    
+    .summary {
+      margin-top: 20px;
+      padding: 15px;
+      background: #e8f4ff;
+      border-radius: 5px;
+      text-align: left;
+    }
+
+    #signOutBtn {
+      background-color:#dc3545;
+      color:white;
+      border:none;
+      padding:10px 20px;
+      border-radius:5px;
+      cursor:pointer;
+      font-size:15px;
+    }
+    #signOutBtn:hover {
+      background-color:#c82333;
+    }
+    #previewBtn {
+      padding:10px 20px;
+      font-size:15px;
+      background-color:#0056d2;
+      color:white;
+      border:none;
+      border-radius:5px;
+      cursor:pointer;
+      margin-left:10px;
+    }
+    #previewBtn:hover {
+      background-color:#003e9c;
+    }
+    
+    .pdf-placeholder {
+      width: 90%;
+      height: 600px;
+      border: 2px dashed #ccc;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f9f9f9;
+      color: #666;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <div class="logo">
+      <!-- BRAC University Logo -->
+      <img src="brac-university-logo.png" alt="BRAC University" />
+      
+      <div class="logo-text">
+        <strong>BRAC University</strong>
+        Student Lifecycle<br>
+        Management
+      </div>
+    </div>
+
+    <ul>
+      <li class="active" onclick="showTab('routine')">Routine</li>
+      <li onclick="showTab('grade')">Grade Sheet</li>
+      <li onclick="showTab('payslip')">Pay Slip</li>
+      <li onclick="showTab('drop')">Course Drop</li>
+      <li onclick="showTab('scholarship')">Scholarship Status</li>
+      <li onclick="showTab('advising')">Advising</li>
+    </ul>
+  </div>
+
+  <div class="main">
+    <div class="header">
+      <h2>Student Dashboard</h2>
+      <div>Welcome, Student</div>
+      <button id="signOutBtn">Sign Out</button>
+    </div>
+
+    <div class="content" id="content">
+      <div id="routine" class="tab">
+        <h2>Class Schedule</h2>
+        <table>
+          <tr>
+            <th>TIME/DAY</th>
+            <th>SUNDAY</th>
+            <th>MONDAY</th>
+            <th>TUESDAY</th>
+            <th>WEDNESDAY</th>
+            <th>THURSDAY</th>
+            <th>FRIDAY</th>
+            <th>SATURDAY</th>
+          </tr>
+          <tr>
+            <td>8:00 am - 9:20 am</td>
+            <td></td>
+            <td>ENG101 -26 --07B-13C</td>
+            <td></td>
+            <td>ENG101 -26 --07B-13C</td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>9:30 am - 10:50 am</td>
+            <td></td>
+            <td>CSE230 -13 -ANWE-10B-15C</td>
+            <td></td>
+            <td>CSE230 -13 -ANWE-10B-15C</td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>11:00 am - 12:20 pm</td>
+            <td></td>
+            <td>CSE110 -21 -MAU-09A-06C</td>
+            <td></td>
+            <td>CSE110 -21 -MAU-09A-06C</td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>12:30 pm - 1:50 pm</td>
+            <td></td>
+            <td>MAT120 -16 --07H-31C</td>
+            <td></td>
+            <td>MAT120 -16 --07H-31C</td>
+            <td>MAT120L -16 --10E-26L</td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>2:00 pm - 4:50 pm</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>CSE110L -21 --09B-10L</td>
+            <td></td>
+            <td></td>
+          </tr>
+        </table>
+      </div>
+
+      <div id="grade" class="tab" style="display:none;">
+        <div class="grade-container">
+          <h1>BRAC University Grade Checker</h1>
+          <p>Click the button below to view your grade sheet.</p>
+          <button id="previewBtn">Preview Result</button>
+          
+          <!-- Embedded Grade Sheet -->
+          <div id="gradeSheet" class="grade-sheet">
+            <div class="grade-header">
+              <h2>BRAC University</h2>
+              <p>Kha 224, Bir Uttam Rafiqul Islam Avenue<br>Merul Badda, Dhaka 1212</p>
+              <h3>GRADE SHEET - UNOFFICIAL COPY</h3>
+            </div>
+            
+            <div class="student-info">
+              <p><strong>Student ID:</strong> 1000056892</p>
+              <p><strong>Name:</strong> Md. Atik Hossain Dip</p>
+              <p><strong>Program:</strong> Bachelor of Science in Computer Science and Engineering</p>
+            </div>
+            
+            <h4>SUMMER 2025</h4>
+            <table class="grades-table">
+              <thead>
+                <tr>
+                  <th>Course No</th>
+                  <th>Course Title</th>
+                  <th>Credits</th>
+                  <th>Grade</th>
+                  <th>Grade Points</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>CSE101</td>
+                  <td>Fundamentals of Programming Language</td>
+                  <td>3.00</td>
+                  <td>A-</td>
+                  <td>3.70</td>
+                </tr>
+                <tr>
+                  <td>ENG091</td>
+                  <td>Foundation Course (in English)</td>
+                  <td>0.00</td>
+                  <td>B+</td>
+                  <td>3.30</td>
+                </tr>
+                <tr>
+                  <td>MAT110</td>
+                  <td>Mathematics I: Differential Calculus & Coordinate Geometry</td>
+                  <td>3.00</td>
+                  <td>A</td>
+                  <td>4.00</td>
+                </tr>
+                <tr>
+                  <td>PHY111</td>
+                  <td>Principles of Physics I</td>
+                  <td>3.00</td>
+                  <td>A-</td>
+                  <td>3.70</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <div class="summary">
+              <p><strong>Semester Summary:</strong></p>
+              <p>Credits Attempted: 9.00 | Credits Earned: 9.00 | GPA: 3.80</p>
+              <p><strong>Cumulative Summary:</strong></p>
+              <p>Credits Attempted: 9.00 | Credits Earned: 9.00 | CGPA: 3.80</p>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px; font-style: italic;">
+              <p>This is an unofficial grade sheet. For official documents, please contact the Registrar's Office.</p>
+            </div>
+          </div>
+          
+          <div id="pdfPlaceholder" class="pdf-placeholder">
+            Grade sheet will appear here after clicking "Preview Result"
+          </div>
+        </div>
+      </div>
+
+      <div id="payslip" class="tab" style="display:none;">
+        <h2>Pay Slip</h2>
+        <p>Not available right now.</p>
+      </div>
+
+      <div id="drop" class="tab" style="display:none;">
+        <h2>Course Drop</h2>
+        <p>Not available right now.</p>
+      </div>
+
+      <div id="scholarship" class="tab" style="display:none;">
+        <h2>Scholarship Status</h2>
+        <p>Not available right now.</p>
+      </div>
+
+      <div id="advising" class="tab" style="display:none;">
+        <h2>Advising</h2>
+        <p>Not available right now.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll(".sidebar ul li");
+    const tabContents = document.querySelectorAll(".tab");
+
+    function showTab(tabId) {
+      tabs.forEach(tab => tab.classList.remove("active"));
+      tabContents.forEach(content => content.style.display = "none");
+      document.getElementById(tabId).style.display = "block";
+      // Highlight the active tab in the sidebar
+      document.querySelector(`.sidebar ul li[onclick="showTab('${tabId}')"]`).classList.add("active");
+    }
+
+    // Initialize the first tab as active upon page load
+    document.addEventListener('DOMContentLoaded', () => {
+        showTab('routine');
+    });
+
+    const signOutBtn = document.getElementById('signOutBtn');
+    const previewBtn = document.getElementById('previewBtn');
+    const gradeSheet = document.getElementById('gradeSheet');
+    const pdfPlaceholder = document.getElementById('pdfPlaceholder');
+
+    // Sign out button (can later be replaced with logout logic)
+    signOutBtn.addEventListener('click', () => {
+      alert('Sign out clicked!');
+    });
+
+    // Preview button shows the grade sheet
+    previewBtn.addEventListener('click', () => {
+      // Hide placeholder and show grade sheet
+      pdfPlaceholder.style.display = 'none';
+      gradeSheet.style.display = 'block';
+      
+      // Scroll to the grade sheet
+      gradeSheet.scrollIntoView({ behavior: 'smooth' });
+    });
+  </script>
+
+</body>
+</html>
